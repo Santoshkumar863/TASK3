@@ -1,0 +1,79 @@
+# Task-3 
+# PREDICTION USING UNSUPERVIZED LEARNING 
+# From the given ‘Iris’ dataset, predict the optimum number of clusters and
+# represented in visualization.
+# DATASET IRIS
+### Identifying the  following data to study:
+### 1)Id having numerical values
+### 2)SepalLengthCm  in centimeters
+### 3)SepalWidthCm in centimeters
+### 4)PetalLengthCm in centimeters
+### 5)PetalLengthCm in centimeters 
+### 6)PetalWidthCm in centimeters
+### 7)Species having catogorial data ( setosa, versicolour and virginica ) 
+
+
+#import libraries 
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+#import dataset
+data=pd.read_csv('Iris123.csv')
+
+data.head()   # head is used to show the first five values of the dataset
+data.tail()  # tail used to show the last five values of the dataset
+
+data.shape #it is used to find the no.of rows and cloumns
+data.info() # total info about Dataset
+
+data.isna().sum() #checking the null values
+
+data.describe() # desciption about the dataset
+
+#plotting the datset using tye pairplot
+sns.pairplot(data)
+
+sns.pairplot(data,hue='Species',markers=['o','s','D'])
+#extract the x and y values
+x=data.iloc[:,2:4].values
+x  #printing the independent variables
+y  #printing the dependent vaariable
+#creating elbow methods to know the clusters
+from sklearn.cluster import KMeans
+wcss=[]                             # this list will collect the wcss values for the diffeent clusters
+for i in range(1,11):
+    kmean=KMeans(n_clusters=i,init='k-means++',random_state=42)
+    kmean.fit(x)
+    wcss.append(kmean.inertia_)
+k=range(1,11)
+plt.scatter(k,wcss,c='red')
+plt.plot(k,wcss,c='blue')
+plt.show()
+
+#selected the no of the clusters
+#predict the clusters
+kmean=KMeans(n_clusters=4,init='k-means++',random_state=42)
+y_pred=kmean.fit_predict(x)
+#prediction of the clusters
+y_pred
+
+# to visualize the clusters we are going to use the y_pred values' row index
+# as a reference to extract the corresponding rows from x
+text=x[:,0]
+text=text.reshape(150,1)
+
+compare=np.append(arr=y_pred.reshape(150,1),values=text,axis=1)
+print(compare)
+
+print(x[y_pred==0,0])
+print(x[y_pred==0,1]
+#using the scatter plot to know the info
+plt.scatter(x[y_pred == 0,0],x[y_pred == 0,1],c='pink',label = 'cluster1')
+plt.scatter(x[y_pred == 1,0],x[y_pred == 1,1],c='blue',label = 'cluster2')
+plt.scatter(x[y_pred == 2,0],x[y_pred == 2,1],c='green',label = 'cluster3')
+plt.scatter(x[y_pred == 3,0],x[y_pred == 3,1],c='skyblue',label = 'cluster4')
+# to get the centroid of the clusters we use the inbuilt clusters_centers function
+plt.scatter(kmean.cluster_centers_[:,0],kmean.cluster_centers_[:,1],s=100,c='red')
+plt.title('PetalLengthCm vrs PetalWidthCm')
+plt.show()
